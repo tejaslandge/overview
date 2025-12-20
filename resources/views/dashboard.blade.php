@@ -28,34 +28,32 @@
 
             <!-- Actions -->
             <div class="flex items-center gap-3">
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit"
-                        class="inline-flex items-center gap-2
-               text-sm font-medium
-               text-slate-600
-               px-4 py-2.5 rounded-lg
-               hover:text-red-600 hover:bg-red-50
-               transition">
-                        ⎋ Logout
-                    </button>
-                </form>
 
+                <!-- Logout Trigger (NO FORM) -->
+                <button onclick="openLogoutModal()"
+                    class="inline-flex items-center gap-2
+                           text-sm font-medium
+                           text-slate-600
+                           px-4 py-2.5 rounded-lg
+                           hover:text-red-600 hover:bg-red-50
+                           transition">
+                    ⎋ Logout
+                </button>
 
                 <a href="{{ route('videos.index') }}"
                     class="inline-flex items-center
-                          border border-slate-300
-                          text-slate-700 text-sm font-medium
-                          px-4 py-2.5 rounded-lg
-                          hover:bg-slate-100 transition">
+                           border border-slate-300
+                           text-slate-700 text-sm font-medium
+                           px-4 py-2.5 rounded-lg
+                           hover:bg-slate-100 transition">
                     Overview
                 </a>
 
                 <a href="/upload"
                     class="inline-flex items-center
-                          bg-slate-800 text-white text-sm font-medium
-                          px-4 py-2.5 rounded-lg
-                          hover:bg-slate-900 transition">
+                           bg-slate-800 text-white text-sm font-medium
+                           px-4 py-2.5 rounded-lg
+                           hover:bg-slate-900 transition">
                     Upload Video
                 </a>
             </div>
@@ -69,23 +67,18 @@
                 @foreach ($videos as $video)
                     <div class="bg-white rounded-xl border shadow-sm hover:shadow-md transition overflow-hidden">
 
-                        <!-- Video -->
                         <div class="bg-black">
                             <video class="w-full aspect-video" controls preload="metadata">
                                 <source src="{{ asset($video->file_path) }}">
                             </video>
                         </div>
 
-                        <!-- Content -->
                         <div class="p-4">
-
                             <p class="text-sm text-slate-700 leading-relaxed line-clamp-3 mb-4">
                                 {{ $video->description ?? 'No description provided.' }}
                             </p>
 
-                            <!-- Actions -->
                             <div class="flex items-center justify-between pt-3 border-t text-sm">
-
                                 <a href="{{ route('videos.edit', $video->id) }}"
                                     class="text-slate-600 hover:text-slate-900 font-medium">
                                     Edit
@@ -95,21 +88,19 @@
                                     onsubmit="return confirm('Delete this video?')">
                                     @csrf
                                     @method('DELETE')
-
-                                    <button type="submit" class="text-slate-500 hover:text-red-600 font-medium">
+                                    <button type="submit"
+                                        class="text-slate-500 hover:text-red-600 font-medium">
                                         Delete
                                     </button>
                                 </form>
-
                             </div>
-
                         </div>
+
                     </div>
                 @endforeach
 
             </div>
         @else
-            <!-- Empty State -->
             <div class="bg-white rounded-xl border shadow-sm p-12 text-center">
                 <h3 class="text-base font-semibold mb-1">
                     No Videos Uploaded
@@ -122,6 +113,64 @@
 
     </main>
 
-</body>
+    <!-- Logout Modal -->
+    <div id="logoutModal"
+         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm"
+         onclick="closeLogoutModal()">
 
+        <div class="bg-white w-full max-w-md rounded-xl shadow-xl p-6"
+             onclick="event.stopPropagation()">
+
+            <h2 class="text-lg font-semibold text-slate-800">
+                Confirm Logout
+            </h2>
+
+            <p class="text-sm text-slate-500 mt-2">
+                Are you sure you want to log out? You’ll need to sign in again.
+            </p>
+
+            <div class="flex justify-end gap-3 mt-6">
+
+                <button onclick="closeLogoutModal()"
+                    class="px-4 py-2 rounded-lg text-sm font-medium
+                           text-slate-600 hover:bg-slate-100 transition">
+                    Cancel
+                </button>
+
+                <!-- SINGLE Logout Form -->
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit"
+                        class="px-4 py-2 rounded-lg text-sm font-medium
+                               bg-red-600 text-white
+                               hover:bg-red-700 transition">
+                        Logout
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeLogoutModal();
+            }
+        });
+    </script>
+
+</body>
 </html>
