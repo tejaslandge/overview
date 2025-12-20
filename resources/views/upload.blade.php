@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
 
@@ -7,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Upload Video</title>
+    <link rel="shortcut icon" href="{{ asset('assets/logo_icon.png') }}" type="image/png">
 
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -29,12 +31,7 @@
             </div>
 
             <!-- Form -->
-            <form
-                method="POST"
-                action="/upload"
-                enctype="multipart/form-data"
-                class="space-y-5"
-            >
+            <form method="POST" action="/upload" enctype="multipart/form-data" class="space-y-5">
                 @csrf
 
                 <!-- Video Input -->
@@ -42,17 +39,12 @@
                     <label class="block text-sm font-medium mb-1">
                         Video File
                     </label>
-                    <input
-                        type="file"
-                        name="video"
-                        accept="video/*"
-                        required
+                    <input type="file" name="video" accept="video/*" required
                         class="block w-full text-sm text-slate-600
                                file:mr-4 file:py-2.5 file:px-4
                                file:rounded-lg file:border-0
                                file:bg-slate-800 file:text-white
-                               hover:file:bg-slate-900 transition"
-                    >
+                               hover:file:bg-slate-900 transition">
                 </div>
 
                 <!-- Description -->
@@ -60,24 +52,18 @@
                     <label class="block text-sm font-medium mb-1">
                         Description
                     </label>
-                    <textarea
-                        name="description"
-                        rows="4"
-                        placeholder="Brief description of the video..."
+                    <textarea name="description" rows="4" placeholder="Brief description of the video..."
                         class="w-full rounded-lg border border-slate-300
                                px-3 py-2 text-sm
-                               focus:border-slate-500 focus:ring-slate-500"
-                    ></textarea>
+                               focus:border-slate-500 focus:ring-slate-500"></textarea>
                 </div>
 
                 <!-- Actions -->
                 <div class="pt-2">
-                    <button
-                        type="submit"
+                    <button type="submit"
                         class="w-full bg-slate-800 text-white
                                py-2.5 rounded-lg text-sm font-medium
-                               hover:bg-slate-900 transition"
-                    >
+                               hover:bg-slate-900 transition">
                         Upload Video
                     </button>
                 </div>
@@ -89,4 +75,5 @@
     </main>
 
 </body>
+
 </html>
