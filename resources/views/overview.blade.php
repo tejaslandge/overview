@@ -148,7 +148,43 @@
         </section>
 
 
+
     </main>
+
+    <footer class="mt-24">
+        <div class="max-w-6xl mx-auto px-4">
+            <section
+                class="relative bg-white rounded-2xl border border-slate-200 shadow-sm px-6 py-10 sm:px-10 sm:py-12 text-center">
+
+                <!-- subtle top accent -->
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-slate-900 rounded-full"></div>
+
+                <p class="text-xs uppercase tracking-widest text-slate-400">
+                    Founded & Led By
+                </p>
+
+                <h3 class="mt-4 text-2xl font-bold text-slate-900">
+                    Sumit Chavhan
+                </h3>
+
+                <p class="mt-1 text-sm text-slate-600">
+                    Founder, Shops Digital Ads <br>
+                    Brando Digitech Pvt. Ltd.
+                </p>
+
+                <p class="mt-6 text-slate-700 text-sm leading-relaxed max-w-xl mx-auto">
+                    “Advertising delivers the strongest impact when brands meet customers
+                    at the exact moment purchasing decisions are made.”
+                </p>
+            </section>
+
+            <p class="text-center text-xs text-slate-500 mt-6">
+                © {{ date('Y') }} Brando Digitech Pvt. Ltd. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+
 
 </body>
 
