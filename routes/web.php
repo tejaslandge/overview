@@ -52,6 +52,13 @@ Route::middleware('admin')->group(function () {
     Route::delete('/videos/{video}', [VideoController::class, 'destroy'])
         ->name('videos.destroy');
 
+    // Extra Features
+    Route::post('/videos/{video}/toggle-status', [VideoController::class, 'toggleStatus'])
+        ->name('videos.toggle-status');
+
+    Route::post('/videos/{video}/track-view', [VideoController::class, 'trackView'])
+        ->name('videos.track-view');
+
     // Logout (ADMIN ONLY)
     Route::post('/logout', [AdminLoginController::class, 'logout'])
         ->name('logout');

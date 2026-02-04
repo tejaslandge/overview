@@ -3,189 +3,338 @@
 
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Shops Digital Ads</title>
-
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://cdn.tailwindcss.com;">
-
+    <title>Shops Digital Ads | Experience The Future</title>
     <link rel="shortcut icon" href="{{ asset('assets/logo_icon.png') }}" type="image/png">
-
-    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #ffffff;
+            color: #1e293b;
+        }
+
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, #f1f5f9 0%, #ffffff 100%);
+        }
+
+        .video-card {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .video-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+
+        .category-pill {
+            transition: all 0.3s ease;
+        }
+
+        .category-pill:hover {
+            background-color: #0f172a;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .play-btn-anim {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+            }
+
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-slate-100 min-h-screen text-slate-800">
+<body class="antialiased">
+    @csrf
 
-    <!-- Header -->
-    <header class="bg-white border-b">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center">
-            <img src="{{ asset('assets/logo.png') }}" alt="Company Logo" class="h-9">
+    <!-- Elegant Navbar -->
+    <nav class="fixed top-0 w-full z-50 glass-nav border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <img src="{{ asset('assets/logo.png') }}" class="h-10 w-auto" alt="Shops Digital Ads">
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-sm font-bold tracking-tight uppercase text-slate-500">
+                <a href="#" class="text-slate-900">Showcase</a>
+                <a href="#about" class="hover:text-slate-900 transition-colors">Our Story</a>
+                <a href="#vision" class="hover:text-slate-900 transition-colors">Impact</a>
+            </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-
-        <!-- Page Intro -->
-        <div class="mb-8">
-            <h1 class="text-2xl sm:text-3xl font-bold mb-2">
-                Digital Advertising Samples
+    <!-- Interactive Hero -->
+    <section class="pt-40 pb-20 hero-gradient overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <span
+                class="inline-block px-4 py-1.5 rounded-full bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.3em] mb-6">Retail
+                Ad Platform</span>
+            <h1 class="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter mb-8 leading-[0.9]">
+                Capturing <span class="text-slate-400">Attention</span><br>Inside Local Retail.
             </h1>
-            <p class="text-slate-600 max-w-3xl">
-                Below are selected video advertisements created for retail and local business campaigns.
-                These samples demonstrate our approach to visual storytelling and performance-focused creatives.
+            <p class="text-xl text-slate-500 font-medium max-w-2xl mx-auto mb-12">
+                We transform the shopping experience through performance-focused digital creatives.
             </p>
+
+            <!-- Filter Bar -->
+            <div class="flex flex-wrap items-center justify-center gap-3 mt-12">
+                <a href="{{ route('videos.index') }}"
+                    class="category-pill px-8 py-3 rounded-2xl border border-slate-200 text-sm font-bold {{ !request('category') ? 'bg-slate-900 text-white' : 'bg-white' }}">
+                    All Masterpieces
+                </a>
+                @foreach ($categories as $cat)
+                    <a href="{{ route('videos.index', ['category' => $cat]) }}"
+                        class="category-pill px-8 py-3 rounded-2xl border border-slate-200 text-sm font-bold {{ request('category') == $cat ? 'bg-slate-900 text-white' : 'bg-white' }}">
+                        {{ $cat }}
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-6 py-20">
+
+        <!-- Search -->
+        <div class="max-w-xl mx-auto mb-20 relative">
+            <input type="text" name="search"
+                onchange="window.location.href='{{ route('videos.index') }}?search='+this.value"
+                value="{{ request('search') }}" placeholder="Search commercial archives..."
+                class="w-full px-16 py-5 rounded-3xl border border-slate-200 bg-slate-50/50 focus:ring-8 focus:ring-slate-100 focus:border-slate-900 outline-none transition-all font-semibold italic text-slate-700">
+            <svg class="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-slate-400" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
         </div>
 
+        <!-- Video Gallery Grid -->
         @if ($videos->count())
-
-            <!-- Video List -->
-            <div class="space-y-10">
-
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                 @foreach ($videos as $video)
-                    <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+                    <div
+                        class="video-card group relative bg-white rounded-[2.5rem] overflow-hidden border border-slate-100">
+                        <div class="relative aspect-video bg-slate-100 overflow-hidden cursor-pointer"
+                            onclick="openPlayer('{{ asset($video->file_path) }}', '{{ $video->id }}', '{{ $video->title ?? '' }}', '{{ $video->description }}', '{{ $video->thumbnail_path ? asset($video->thumbnail_path) : '' }}')">
+                            @if ($video->thumbnail_path)
+                                <img src="{{ asset($video->thumbnail_path) }}"
+                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
+                            @else
+                                <!-- Video Preview as Thumbnail Fallback -->
+                                <video
+                                    class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                                    preload="metadata">
+                                    <source src="{{ asset($video->file_path) }}#t=0.5">
+                                </video>
+                            @endif
 
-                        <!-- Video -->
-                        <div class="bg-black">
-                            <video class="w-full max-h-[520px] object-contain" controls preload="metadata">
-                                <source src="{{ asset($video->file_path) }}">
-                                Your browser does not support the video tag.
-                            </video>
+                            <!-- Premium Play Button -->
+                            <div
+                                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 scale-90 group-hover:scale-100 bg-slate-900/10">
+                                <div
+                                    class="w-20 h-20 bg-white shadow-2xl rounded-full flex items-center justify-center text-slate-900 play-btn-anim">
+                                    <svg class="w-8 h-8 fill-current ml-1" viewBox="0 0 20 20">
+                                        <path
+                                            d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.333-5.89a1.5 1.5 0 000-2.538L6.3 2.841z" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div
+                                class="absolute bottom-6 left-6 px-4 py-1.5 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200">
+                                <span
+                                    class="text-[10px] font-black uppercase tracking-widest text-slate-900">{{ $video->category }}</span>
+                            </div>
                         </div>
 
-                        <!-- Description -->
-                        @if ($video->description)
-                            <div class="p-5 border-t">
-                                <p class="text-sm sm:text-base text-slate-700 leading-relaxed">
-                                    {{ $video->description }}
-                                </p>
+                        <div class="p-8">
+                            @if ($video->title)
+                                <h3 class="text-2xl font-black text-slate-900 mb-2 leading-tight">{{ $video->title }}
+                                </h3>
+                            @endif
+                            <div
+                                class="flex items-center justify-between text-slate-400 mt-4 pt-4 border-t border-slate-50">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                    <span
+                                        class="text-[10px] font-black uppercase tracking-widest">{{ $video->created_at->format('M Y') }}</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round"
+                                            stroke-linejoin="round" stroke-width="2" />
+                                        <path
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                                    </svg>
+                                    <span id="view-count-{{ $video->id }}"
+                                        class="text-xs font-black text-slate-900">{{ number_format($video->views) }}</span>
+                                </div>
                             </div>
-                        @endif
-
+                        </div>
                     </div>
                 @endforeach
-
             </div>
         @else
-            <!-- Empty State -->
-            <div class="bg-white rounded-xl shadow-sm p-12 text-center">
-                <h3 class="text-lg font-semibold mb-2">
-                    No Videos Available
-                </h3>
-                <p class="text-slate-500">
-                    Advertising samples will be displayed here once uploaded.
-                </p>
+            <div class="text-center py-32 bg-slate-50 rounded-[4rem] border-2 border-dashed border-slate-200">
+                <h3 class="text-3xl font-black text-slate-900 mb-2">No Archived Content</h3>
+                <p class="text-slate-500 font-medium">Retail masterpieces are being curated as we speak.</p>
             </div>
         @endif
 
-
-        <!-- Company Information -->
-        <section class="mt-16 space-y-12">
-
-            <!-- About Us -->
-            <div
-                class="bg-white rounded-xl border shadow-sm p-6 sm:p-8
-               transform transition duration-500 ease-out
-               hover:-translate-y-1 hover:shadow-md
-               animate-fade-in-up">
-                <h2 class="text-xl sm:text-2xl font-semibold mb-4 flex items-center gap-2">
-                    🏢 About Us
-                </h2>
-                <p class="text-slate-700 leading-relaxed max-w-4xl">
-                    Shops Digital Ads is a retail-focused digital advertising platform founded in 2022,
-                    built on extensive on-ground market experience and a deep understanding of customer
-                    behavior within retail environments. With increasing demand, demonstrated success,
-                    and a long-term vision, the business was formally structured in September 2025 under
-                    Brando Digitech Pvt. Ltd. to support large-scale expansion and professional operations.
-                </p>
-                <p class="text-slate-700 leading-relaxed max-w-4xl mt-4">
-                    Our platform connects brands directly with customers at the point where buying
-                    decisions are made inside local retail stores creating meaningful visibility
-                    that drives real recall and word-of-mouth impact.
-                </p>
-            </div>
-
-            <!-- Vision & Mission -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-                <!-- Vision -->
-                <div
-                    class="bg-white rounded-xl border shadow-sm p-6 sm:p-8
-                   transform transition duration-500 ease-out
-                   hover:-translate-y-1 hover:shadow-md
-                   animate-fade-in-up delay-100">
-                    <h3 class="text-lg sm:text-xl font-semibold mb-3 flex items-center gap-2">
-                        👁️ Our Vision
-                    </h3>
-                    <p class="text-slate-700 leading-relaxed">
-                        To build India’s most trusted retail digital advertising network connecting
-                        brands, retailers, and customers through meaningful, high-visibility advertising
-                        at the point of purchase.
-                    </p>
+        <!-- About Section -->
+        <section id="about" class="mt-40">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                <div class="lg:col-span-12">
+                    <h2 class="text-5xl font-black text-slate-900 mb-12 flex items-center gap-6">
+                        <span class="p-4 bg-slate-900 rounded-[2rem] text-white">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                        </span>
+                        About Shops Digital Ads
+                    </h2>
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-2 gap-12 text-slate-500 font-medium text-lg leading-[1.8]">
+                        <p class="text-slate-900 font-bold text-2xl leading-tight">Founded in 2022, built on extensive
+                            on-ground market experience and deep understanding of retail behavior.</p>
+                        <p>Our platform connects brands directly with customers at the point where buying decisions are
+                            made inside local retail stores. Formalized in September 2025 under Brando Digitech Pvt.
+                            Ltd., we support large-scale professional expansion.</p>
+                    </div>
                 </div>
-
-                <!-- Mission -->
-                <div
-                    class="bg-white rounded-xl border shadow-sm p-6 sm:p-8
-                   transform transition duration-500 ease-out
-                   hover:-translate-y-1 hover:shadow-md
-                   animate-fade-in-up delay-200">
-                    <h3 class="text-lg sm:text-xl font-semibold mb-3 flex items-center gap-2">
-                        🎯 Our Mission
-                    </h3>
-                    <ul class="list-disc list-inside text-slate-700 space-y-2 leading-relaxed">
-                        <li>Help brands grow locally before scaling nationally.</li>
-                        <li>Enable retailers to earn additional income through in-store digital screens.</li>
-                        <li>Provide cost-effective advertising with measurable, real-world impact.</li>
-                        <li>Strengthen brand recall at moments when purchasing decisions are made.</li>
-                    </ul>
-                </div>
-
             </div>
-
         </section>
 
-
+        <!-- Vision/Mission Grid -->
+        <section id="vision" class="mt-24 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-slate-900 rounded-[3rem] p-12 text-white">
+                <h3 class="text-3xl font-black mb-6">Our Vision</h3>
+                <p class="text-slate-400 text-xl font-medium leading-relaxed">To build India’s most trusted retail
+                    digital advertising network connecting brands, retailers, and customers through meaningful,
+                    high-visibility advertising.</p>
+            </div>
+            <div class="bg-white rounded-[3rem] p-12 border-2 border-slate-100">
+                <h3 class="text-3xl font-black text-slate-900 mb-6">Our Mission</h3>
+                <ul class="space-y-4">
+                    @foreach (['Help brands grow locally before scaling nationally.', 'Enable retailers to earn additional income.', 'Provide cost-effective advertising with real impact.', 'Strengthen brand recall at purchasing moments.'] as $item)
+                        <li class="flex items-center gap-4 text-slate-600 font-bold">
+                            <div class="w-2 h-2 bg-slate-900 rounded-full"></div>
+                            {{ $item }}
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </section>
 
     </main>
 
-    <footer class="mt-24">
-        <div class="max-w-6xl mx-auto px-4">
-            <section
-                class="relative bg-white rounded-2xl border border-slate-200 shadow-sm px-6 py-10 sm:px-10 sm:py-12 text-center">
+    <!-- Video Modal -->
+    <div id="playerModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-white p-4 sm:p-20"
+        onclick="closePlayer()">
+        <button class="absolute top-10 right-10 text-slate-900 hover:rotate-90 transition-transform duration-500"
+            onclick="closePlayer()">
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+            </svg>
+        </button>
+        <div class="w-full max-w-6xl flex flex-col items-center gap-10" onclick="event.stopPropagation()">
+            <div class="w-full aspect-video rounded-[3rem] overflow-hidden bg-black shadow-2xl">
+                <video id="mainVideo" class="w-full h-full" controls onplay="trackView()"></video>
+            </div>
+            <div class="text-center max-w-4xl">
+                <h2 id="modalTitle" class="text-5xl font-black text-slate-900 mb-4 tracking-tighter"></h2>
+                <p id="modalDesc" class="text-slate-500 font-medium text-xl leading-relaxed"></p>
+            </div>
+        </div>
+    </div>
 
-                <!-- subtle top accent -->
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-slate-900 rounded-full"></div>
-
-                <p class="text-xs uppercase tracking-widest text-slate-400">
-                    Founded & Led By
-                </p>
-
-                <h3 class="mt-4 text-2xl font-bold text-slate-900">
-                    Sumit Chavhan
-                </h3>
-
-                <p class="mt-1 text-sm text-slate-600">
-                    Founder, Shops Digital Ads <br>
-                    Brando Digitech Pvt. Ltd.
-                </p>
-
-                <p class="mt-6 text-slate-700 text-sm leading-relaxed max-w-xl mx-auto">
-                    “Advertising delivers the strongest impact when brands meet customers
-                    at the exact moment purchasing decisions are made.”
-                </p>
-            </section>
-
-            <p class="text-center text-xs text-slate-500 mt-6">
-                © {{ date('Y') }} Brando Digitech Pvt. Ltd. All rights reserved.
+    <!-- Minimalist Footer -->
+    <footer class="mt-40 border-t border-slate-100 py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="mb-12">
+                <h3 class="text-3xl font-black text-slate-900 mb-1 leading-none">Sumit Chavhan</h3>
+                <p class="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mt-4">Founder & Visionary</p>
+            </div>
+            <p class="text-2xl text-slate-400 italic font-medium max-w-3xl mx-auto leading-relaxed">
+                “Advertising delivers the strongest impact when brands meet customers at the exact moment purchasing
+                decisions are made.”
             </p>
+            <div
+                class="mt-20 flex flex-col md:flex-row items-center justify-between gap-8 pt-10 border-t border-slate-200 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <span>© {{ date('Y') }} BRANDO DIGITECH PVT. LTD.</span>
+                <div class="flex gap-8">
+                    <a href="#" class="hover:text-slate-900 transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-slate-900 transition-colors">Terms</a>
+                    <a href="#" class="hover:text-slate-900 transition-colors">Contact</a>
+                </div>
+            </div>
         </div>
     </footer>
 
+    <script>
+        let currentVideoId = null;
+        let viewTracked = false;
 
+        function openPlayer(src, id, title, desc, poster) {
+            currentVideoId = id;
+            viewTracked = false;
+            const video = document.getElementById('mainVideo');
+            video.src = src;
+            video.poster = poster || '';
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = desc || 'Retail storytelling at its finest.';
+            const modal = document.getElementById('playerModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            video.play();
+        }
 
+        function closePlayer() {
+            const video = document.getElementById('mainVideo');
+            video.pause();
+            video.src = "";
+            video.poster = "";
+            document.getElementById('playerModal').classList.add('hidden');
+            document.getElementById('playerModal').classList.remove('flex');
+        }
+
+        async function trackView() {
+            if (viewTracked || !currentVideoId) return;
+            try {
+                await fetch(`/videos/${currentVideoId}/track-view`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                viewTracked = true;
+            } catch (err) {}
+        }
+    </script>
 </body>
 
 </html>

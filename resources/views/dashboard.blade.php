@@ -4,155 +4,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Video Hub | Professional Dashboard</title>
     <link rel="shortcut icon" href="{{ asset('assets/logo_icon.png') }}" type="image/png">
-
-    <title>Shops Digital Ads</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .card-shadow {
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 0 10px -5px rgba(0, 0, 0, 0.02);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .custom-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.25rem center;
+            background-size: 1rem;
+        }
+    </style>
 </head>
 
-<body class="bg-slate-100 min-h-screen text-slate-800">
+<body class="min-h-screen antialiased">
 
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-8 py-10">
 
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-
+        <!-- Header Section -->
+        <header class="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12">
             <div>
-                <h1 class="text-2xl font-semibold tracking-tight">
-                    Video Management
-                </h1>
-                <p class="text-sm text-slate-500 mt-1">
-                    Upload, review, and manage client videos
-                </p>
+                <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">Campaign Manager</h1>
+                <p class="text-slate-500 mt-2 font-medium">Manage, analyze and optimize your digital ads</p>
             </div>
 
-            <!-- Actions -->
-            <div class="flex items-center gap-3">
-
-                <!-- Logout Trigger (NO FORM) -->
+            <div class="flex items-center gap-4">
+                <a href="{{ route('videos.index') }}" target="_blank"
+                    class="px-6 py-4 rounded-2xl bg-white text-sm font-bold shadow-sm border border-slate-200 hover:shadow-md transition-all text-slate-700 flex items-center gap-2">
+                    Live Overview
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </a>
+                <a href="{{ route('videos.create') }}"
+                    class="px-8 py-4 rounded-2xl bg-slate-900 text-white text-sm font-bold shadow-xl hover:scale-105 transition-all">New
+                    Campaign</a>
                 <button onclick="openLogoutModal()"
-                    class="inline-flex items-center gap-2
-                           text-sm font-medium
-                           text-slate-600
-                           px-4 py-2.5 rounded-lg
-                           hover:text-red-600 hover:bg-red-50
-                           transition">
-                    ⎋ Logout
-                </button>
-
-                <a href="{{ route('videos.index') }}"
-                    class="inline-flex items-center
-                           border border-slate-300
-                           text-slate-700 text-sm font-medium
-                           px-4 py-2.5 rounded-lg
-                           hover:bg-slate-100 transition">
-                    Overview
-                </a>
-
-                <a href="/upload"
-                    class="inline-flex items-center
-                           bg-slate-800 text-white text-sm font-medium
-                           px-4 py-2.5 rounded-lg
-                           hover:bg-slate-900 transition">
-                    Upload Video
-                </a>
+                    class="px-6 py-4 rounded-2xl bg-red-50 text-red-600 text-sm font-bold hover:bg-red-100 transition-all">Logout</button>
             </div>
+        </header>
 
-        </div>
+        <!-- Filters & Search -->
+        <section class="glass-panel rounded-[2.5rem] p-6 mb-12 shadow-sm">
+            <form action="{{ route('admin.dashboard') }}" method="GET"
+                class="flex flex-col md:flex-row items-center gap-5">
+                <div class="relative flex-1 group w-full">
+                    <svg class="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-slate-900 transition-colors"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        placeholder="Search by title or description..."
+                        class="w-full pl-14 pr-6 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-medium">
+                </div>
 
-        <!-- Video List -->
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <div class="relative w-full md:w-56">
+                        <select name="category" onchange="this.form.submit()"
+                            class="custom-select w-full px-6 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-bold text-slate-700 outline-none cursor-pointer focus:border-slate-900 transition-all">
+                            <option value="">All Categories</option>
+                            @foreach ($categories as $cat)
+                                <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
+                                    {{ $cat }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="relative w-full md:w-48">
+                        <select name="status" onchange="this.form.submit()"
+                            class="custom-select w-full px-6 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-bold text-slate-700 outline-none cursor-pointer focus:border-slate-900 transition-all">
+                            <option value="">All Status</option>
+                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                            <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Video Grid -->
         @if ($videos->count())
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 @foreach ($videos as $video)
-                    <div class="bg-white rounded-xl border shadow-sm hover:shadow-md transition overflow-hidden">
+                    <article
+                        class="group bg-white rounded-[2.5rem] overflow-hidden card-shadow border border-slate-100/50 hover:border-slate-900/10 transition-all duration-500">
+                        <!-- Media Preview -->
+                        <div class="relative aspect-video bg-slate-900 overflow-hidden cursor-pointer"
+                            onclick="openPreviewModal('{{ asset($video->file_path) }}', '{{ $video->title }}', '{{ $video->description }}')">
+                            @if ($video->thumbnail_path)
+                                <img src="{{ asset($video->thumbnail_path) }}"
+                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            @else
+                                <video class="w-full h-full object-cover opacity-80" muted preload="metadata">
+                                    <source src="{{ asset($video->file_path) }}">
+                                </video>
+                            @endif
 
-                        <div class="bg-black">
-                            <video class="w-full aspect-video" controls preload="metadata">
-                                <source src="{{ asset($video->file_path) }}">
-                            </video>
-                        </div>
+                            <!-- Badges -->
+                            <div class="absolute top-6 left-6 flex gap-2">
+                                <span
+                                    class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest {{ $video->is_active ? 'bg-emerald-500 text-white' : 'bg-slate-500 text-white' }}">
+                                    {{ $video->is_active ? 'Active' : 'Hidden' }}
+                                </span>
+                                <span
+                                    class="bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-900 shadow-sm">
+                                    {{ $video->category }}
+                                </span>
+                            </div>
 
-                        <div class="p-4">
-                            <p class="text-sm text-slate-700 leading-relaxed line-clamp-3 mb-4">
-                                {{ $video->description ?? 'No description provided.' }}
-                            </p>
-
-                            <div class="flex items-center justify-between pt-3 border-t text-sm">
-                                <a href="{{ route('videos.edit', $video->id) }}"
-                                    class="text-slate-600 hover:text-slate-900 font-medium">
-                                    Edit
-                                </a>
-
-                                <form method="POST" action="{{ route('videos.destroy', $video->id) }}"
-                                    onsubmit="return confirm('Delete this video?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        class="text-slate-500 hover:text-red-600 font-medium">
-                                        Delete
-                                    </button>
-                                </form>
+                            <!-- View Count Overlay -->
+                            <div
+                                class="absolute bottom-6 right-6 bg-black/60 backdrop-blur-md px-4 py-2 rounded-2xl flex items-center gap-2">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <span class="text-white text-xs font-bold">{{ number_format($video->views) }}</span>
                             </div>
                         </div>
 
-                    </div>
-                @endforeach
+                        <!-- Content -->
+                        <div class="p-8">
+                            <h3 class="text-xl font-extrabold text-slate-900 line-clamp-1 mb-2">
+                                {{ $video->title ?? 'Untitled Campaign' }}</h3>
+                            <p class="text-sm text-slate-500 line-clamp-2 font-medium mb-8 leading-relaxed">
+                                {{ $video->description }}</p>
 
+                            <div class="flex items-center justify-between pt-6 border-t border-slate-50">
+                                <div class="flex items-center gap-3">
+                                    <a href="{{ route('videos.edit', $video->id) }}"
+                                        class="p-3 rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-900 hover:text-white transition-all shadow-sm">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                                        </svg>
+                                    </a>
+                                    <form action="{{ route('videos.toggle-status', $video->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            class="p-3 rounded-xl {{ $video->is_active ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600' }} hover:scale-105 transition-transform shadow-sm">
+                                            @if ($video->is_active)
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                                                </svg>
+                                            @else
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                            @endif
+                                        </button>
+                                    </form>
+                                    <button
+                                        onclick="openQRModal('{{ url('/videos/' . $video->id) }}', '{{ $video->title }}')"
+                                        class="p-3 rounded-xl bg-blue-50 text-blue-600 hover:scale-105 transition-transform shadow-sm">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <button onclick="openDeleteModal('{{ route('videos.destroy', $video->id) }}')"
+                                    class="text-sm font-bold text-red-500 hover:text-red-700 transition-colors">Delete</button>
+                            </div>
+                        </div>
+                    </article>
+                @endforeach
             </div>
         @else
-            <div class="bg-white rounded-xl border shadow-sm p-12 text-center">
-                <h3 class="text-base font-semibold mb-1">
-                    No Videos Uploaded
-                </h3>
-                <p class="text-sm text-slate-500">
-                    Uploaded client videos will appear here.
-                </p>
-            </div>
+            <section class="bg-white rounded-[2.5rem] p-20 text-center shadow-sm border border-slate-100">
+                <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="2" />
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-black text-slate-900">No campaigns found</h2>
+                <p class="text-slate-500 mt-2 font-medium">Try adjusting your filters or launch a new campaign</p>
+            </section>
         @endif
-
     </main>
+
+    <!-- QR Modal -->
+    <div id="qrModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-md p-6"
+        onclick="closeQRModal()">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-10 text-center"
+            onclick="event.stopPropagation()">
+            <h2 id="qrTitle" class="text-2xl font-black text-slate-900 mb-6">Campaign QR</h2>
+            <div class="bg-slate-50 p-6 rounded-[2rem] inline-block mb-8 shadow-inner">
+                <img id="qrImage" src="" alt="QR Code" class="w-48 h-48">
+            </div>
+            <p class="text-slate-500 text-sm font-medium mb-8">Scan to view this campaign instantly on mobile</p>
+            <button onclick="closeQRModal()"
+                class="w-full py-4 rounded-2xl bg-slate-900 text-white text-sm font-black uppercase tracking-widest">Close</button>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div id="deleteModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-red-900/20 backdrop-blur-md p-6"
+        onclick="closeDeleteModal()">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-10" onclick="event.stopPropagation()">
+            <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6">
+                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </div>
+            <h2 class="text-2xl font-black text-slate-900 mb-2">Delete Campaign?</h2>
+            <p class="text-slate-500 font-medium mb-8 text-sm leading-relaxed">This will permanently remove the video,
+                views and analytics. This action cannot be undone.</p>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <button onclick="closeDeleteModal()"
+                    class="flex-1 py-4 rounded-2xl bg-slate-100 text-slate-600 text-xs font-black uppercase">Keep
+                    it</button>
+                <form id="deleteForm" method="POST" action="" class="flex-1">
+                    @csrf @method('DELETE')
+                    <button type="submit"
+                        class="w-full py-4 rounded-2xl bg-red-600 text-white text-xs font-black uppercase shadow-lg shadow-red-600/20">Delete
+                        Forever</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Logout Modal -->
     <div id="logoutModal"
-         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm"
-         onclick="closeLogoutModal()">
-
-        <div class="bg-white w-full max-w-md rounded-xl shadow-xl p-6"
-             onclick="event.stopPropagation()">
-
-            <h2 class="text-lg font-semibold text-slate-800">
-                Confirm Logout
-            </h2>
-
-            <p class="text-sm text-slate-500 mt-2">
-                Are you sure you want to log out? You’ll need to sign in again.
-            </p>
-
-            <div class="flex justify-end gap-3 mt-6">
-
-                <button onclick="closeLogoutModal()"
-                    class="px-4 py-2 rounded-lg text-sm font-medium
-                           text-slate-600 hover:bg-slate-100 transition">
-                    Cancel
-                </button>
-
-                <!-- SINGLE Logout Form -->
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/40 backdrop-blur-md p-6"
+        onclick="closeLogoutModal()">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-10 text-center"
+            onclick="event.stopPropagation()">
+            <h2 class="text-2xl font-black text-slate-900 mb-2">Signing Out?</h2>
+            <p class="text-slate-500 font-medium mb-8">Are you sure you want to end your current session?</p>
+            <div class="flex flex-col gap-4">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit"
-                        class="px-4 py-2 rounded-lg text-sm font-medium
-                               bg-red-600 text-white
-                               hover:bg-red-700 transition">
-                        Logout
-                    </button>
+                        class="w-full py-4 rounded-2xl bg-slate-900 text-white text-sm font-black uppercase tracking-widest">Yes,
+                        Sign Out</button>
                 </form>
+                <button onclick="closeLogoutModal()"
+                    class="w-full py-4 rounded-2xl bg-slate-100 text-slate-600 text-xs font-black uppercase">Stay
+                    Logged In</button>
+            </div>
+        </div>
+    </div>
 
+    <!-- Preview Modal -->
+    <div id="previewModal"
+        class="fixed inset-0 z-50 hidden flex-col items-center justify-center bg-slate-900/90 backdrop-blur-xl p-4 sm:p-10"
+        onclick="closePreviewModal()">
+        <button
+            class="absolute top-8 right-8 text-white/50 hover:text-white transition-all hover:rotate-90 duration-300"
+            onclick="closePreviewModal()">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+            </svg>
+        </button>
+
+        <div class="w-full max-w-5xl flex flex-col items-center gap-8" onclick="event.stopPropagation()">
+            <div class="w-full aspect-video rounded-3xl overflow-hidden bg-black shadow-2xl ring-1 ring-white/10">
+                <video id="previewVideo" class="w-full h-full" controls></video>
+            </div>
+            <div class="text-center max-w-4xl">
+                <h2 id="previewTitle" class="text-3xl font-black text-white mb-2 tracking-tight"></h2>
+                <p id="previewDesc" class="text-slate-400 font-medium text-lg leading-relaxed"></p>
             </div>
         </div>
     </div>
 
     <script>
+        function openPreviewModal(src, title, desc) {
+            const video = document.getElementById('previewVideo');
+            video.src = src;
+            document.getElementById('previewTitle').innerText = title || 'Untitled Campaign';
+            document.getElementById('previewDesc').innerText = desc || 'No description available.';
+            const modal = document.getElementById('previewModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            video.play();
+        }
+
+        function closePreviewModal() {
+            const video = document.getElementById('previewVideo');
+            video.pause();
+            video.src = "";
+            const modal = document.getElementById('previewModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function openQRModal(url, title) {
+            document.getElementById('qrTitle').innerText = title || 'Campaign';
+            document.getElementById('qrImage').src =
+                `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+            const modal = document.getElementById('qrModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeQRModal() {
+            const modal = document.getElementById('qrModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function openDeleteModal(action) {
+            document.getElementById('deleteForm').action = action;
+            const modal = document.getElementById('deleteModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
         function openLogoutModal() {
             const modal = document.getElementById('logoutModal');
             modal.classList.remove('hidden');
@@ -165,12 +369,15 @@
             modal.classList.remove('flex');
         }
 
-        document.addEventListener('keydown', function (e) {
+        document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
+                closeQRModal();
+                closeDeleteModal();
                 closeLogoutModal();
+                closePreviewModal();
             }
         });
     </script>
-
 </body>
+
 </html>

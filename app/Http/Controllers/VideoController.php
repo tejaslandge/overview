@@ -9,21 +9,56 @@ use Illuminate\Support\Facades\Storage;
 class VideoController extends Controller
 {
     /**
-     * Admin dashboard view
+     * Admin dashboard view with search and filters
      */
-    public function index()
+    public function index(Request $request)
     {
-        $videos = Video::latest()->get();
-        return view('dashboard', compact('videos'));
+        $query = Video::query();
+
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                  ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->filled('status')) {
+            $status = $request->status === 'active' ? 1 : 0;
+            $query->where('is_active', $status);
+        }
+
+        $videos = $query->latest()->get();
+        $categories = Video::whereNotNull('category')->distinct()->pluck('category');
+
+        return view('dashboard', compact('videos', 'categories'));
     }
 
     /**
      * Public overview page (client-facing)
      */
-    public function overview()
+    public function overview(Request $request)
     {
-        $videos = Video::latest()->get();
-        return view('overview', compact('videos'));
+        $query = Video::where('is_active', true);
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                  ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $videos = $query->latest()->get();
+        $categories = Video::where('is_active', true)->whereNotNull('category')->distinct()->pluck('category');
+
+        return view('overview', compact('videos', 'categories'));
     }
 
     /**
@@ -40,15 +75,27 @@ class VideoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'video' => 'required|file|mimes:mp4,mkv,avi|max:102400', // 100MB
+            'title' => 'required|string|max:255',
+            'video' => 'required|file|mimes:mp4,mkv,avi|max:204800', // 200MB
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120', // 5MB
+            'category' => 'nullable|string|max:50',
             'description' => 'nullable|string|max:1000',
         ]);
 
-        $path = $validated['video']->store('media/overview', 'public');
+        $videoPath = $request->file('video')->store('media/videos', 'public');
+        
+        $thumbnailPath = null;
+        if ($request->hasFile('thumbnail')) {
+            $thumbnailPath = $request->file('thumbnail')->store('media/thumbnails', 'public');
+        }
 
         Video::create([
-            'file_path' => 'storage/' . $path,
+            'title' => $validated['title'],
+            'file_path' => 'storage/' . $videoPath,
+            'thumbnail_path' => $thumbnailPath ? 'storage/' . $thumbnailPath : null,
             'description' => $validated['description'] ?? null,
+            'category' => $validated['category'] ?? 'General',
+            'is_active' => true,
         ]);
 
         return redirect()
@@ -70,23 +117,37 @@ class VideoController extends Controller
     public function update(Request $request, Video $video)
     {
         $validated = $request->validate([
-            'video' => 'nullable|file|mimes:mp4,mkv,avi|max:102400', // 100MB
+            'title' => 'required|string|max:255',
+            'video' => 'nullable|file|mimes:mp4,mkv,avi|max:204800',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'category' => 'nullable|string|max:50',
             'description' => 'nullable|string|max:1000',
         ]);
 
         // Replace video if new file uploaded
         if ($request->hasFile('video')) {
-
             $oldPath = str_replace('storage/', '', $video->file_path);
-
             if (Storage::disk('public')->exists($oldPath)) {
                 Storage::disk('public')->delete($oldPath);
             }
-
-            $newPath = $validated['video']->store('media/overview', 'public');
+            $newPath = $request->file('video')->store('media/videos', 'public');
             $video->file_path = 'storage/' . $newPath;
         }
 
+        // Replace thumbnail
+        if ($request->hasFile('thumbnail')) {
+            if ($video->thumbnail_path) {
+                $oldThumb = str_replace('storage/', '', $video->thumbnail_path);
+                if (Storage::disk('public')->exists($oldThumb)) {
+                    Storage::disk('public')->delete($oldThumb);
+                }
+            }
+            $newThumb = $request->file('thumbnail')->store('media/thumbnails', 'public');
+            $video->thumbnail_path = 'storage/' . $newThumb;
+        }
+
+        $video->title = $validated['title'];
+        $video->category = $validated['category'] ?? $video->category;
         $video->description = $validated['description'] ?? null;
         $video->save();
 
@@ -100,10 +161,15 @@ class VideoController extends Controller
      */
     public function destroy(Video $video)
     {
-        $path = str_replace('storage/', '', $video->file_path);
+        $paths = [
+            str_replace('storage/', '', $video->file_path),
+            $video->thumbnail_path ? str_replace('storage/', '', $video->thumbnail_path) : null,
+        ];
 
-        if (Storage::disk('public')->exists($path)) {
-            Storage::disk('public')->delete($path);
+        foreach ($paths as $path) {
+            if ($path && Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
         }
 
         $video->delete();
@@ -111,5 +177,25 @@ class VideoController extends Controller
         return redirect()
             ->route('admin.dashboard')
             ->with('success', 'Video deleted successfully.');
+    }
+
+    /**
+     * Toggle status via AJAX or Redirect
+     */
+    public function toggleStatus(Video $video)
+    {
+        $video->is_active = !$video->is_active;
+        $video->save();
+
+        return back()->with('success', 'Status updated.');
+    }
+
+    /**
+     * Track View (Increment)
+     */
+    public function trackView(Video $video)
+    {
+        $video->increment('views');
+        return response()->json(['success' => true, 'views' => $video->views]);
     }
 }
