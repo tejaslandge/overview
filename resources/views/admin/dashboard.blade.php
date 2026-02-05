@@ -33,11 +33,74 @@
             background-position: right 1.25rem center;
             background-size: 1rem;
         }
+
+        /* Custom Video Player Styles */
+        .video-container {
+            position: relative;
+            background: #000;
+        }
+
+        .custom-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            padding: 30px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 20;
+        }
+
+        .video-container:hover .custom-controls {
+            opacity: 1;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: #fff;
+            border-radius: 10px;
+            width: 0%;
+        }
+
+        .control-btns {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            color: white;
+        }
+
+        .video-container video::-webkit-media-controls {
+            display: none !important;
+        }
+
+        video {
+            pointer-events: none;
+        }
+
+        .video-click-area {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+        }
     </style>
 </head>
 
-<body class="min-h-screen antialiased">
-
+<body class="min-h-screen antialiased" oncontextmenu="return false;">
+    @csrf
     <main class="max-w-7xl mx-auto px-4 sm:px-8 py-10">
 
         <!-- Header Section -->
@@ -307,8 +370,40 @@
         </button>
 
         <div class="w-full max-w-5xl flex flex-col items-center gap-8" onclick="event.stopPropagation()">
-            <div class="w-full aspect-video rounded-3xl overflow-hidden bg-black shadow-2xl ring-1 ring-white/10">
-                <video id="previewVideo" class="w-full h-full" controls></video>
+            <div
+                class="w-full video-container aspect-video rounded-3xl overflow-hidden bg-black shadow-2xl ring-1 ring-white/10">
+                <div class="video-click-area" onclick="togglePlay()"></div>
+                <video id="previewVideo" class="w-full h-full"></video>
+
+                <div class="custom-controls" onclick="event.stopPropagation()">
+                    <div class="progress-bar-container" id="progressBar">
+                        <div class="progress-bar-fill" id="progressFill"></div>
+                    </div>
+
+                    <div class="control-btns">
+                        <button onclick="skip(-10)" class="hover:scale-110 transition-transform">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12.5 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6c-1.66 0-3.14-.69-4.22-1.78L6.37 17.63C7.81 19.08 9.8 20 12 20c4.42 0 8-3.58 8-8s-3.58-8-8-8zm-.5 11V9l-3.5 2.5 3.5 2.5z" />
+                            </svg>
+                        </button>
+
+                        <button onclick="togglePlay()"
+                            class="bg-white text-black p-4 rounded-full hover:scale-110 transition-transform"
+                            id="playBtn">
+                            <svg id="playIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                        </button>
+
+                        <button onclick="skip(10)" class="hover:scale-110 transition-transform">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M11.5 3c4.97 0 9 4.03 9 9H23l-3.89 3.89-.07.14L15 12h3c0-3.31-2.69-6-6-6s-6 2.69-6 6 2.69 6 6 6c1.66 0 3.14-.69 4.22-1.78l1.41 1.41C16.19 19.08 14.2 20 12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8zm.5 11V9l3.5 2.5-3.5 2.5z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="text-center max-w-4xl">
                 <h2 id="previewTitle" class="text-3xl font-black text-white mb-2 tracking-tight"></h2>
@@ -318,25 +413,64 @@
     </div>
 
     <script>
+        const video = document.getElementById('previewVideo');
+        const playIcon = document.getElementById('playIcon');
+        const progressFill = document.getElementById('progressFill');
+        const progressBar = document.getElementById('progressBar');
+
+        function togglePlay() {
+            if (video.paused) {
+                video.play();
+                playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            } else {
+                video.pause();
+                playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            }
+        }
+
+        function skip(time) {
+            video.currentTime += time;
+        }
+
+        video.addEventListener('timeupdate', () => {
+            const percent = (video.currentTime / video.duration) * 100;
+            progressFill.style.width = percent + '%';
+        });
+
+        progressBar.addEventListener('click', (e) => {
+            const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
+            video.currentTime = scrubTime;
+        });
+
         function openPreviewModal(src, title, desc) {
-            const video = document.getElementById('previewVideo');
             video.src = src;
             document.getElementById('previewTitle').innerText = title || 'Untitled Campaign';
             document.getElementById('previewDesc').innerText = desc || 'No description available.';
             const modal = document.getElementById('previewModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+
+            // Reset UI
+            progressFill.style.width = '0%';
+            playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+
             video.play();
         }
 
         function closePreviewModal() {
-            const video = document.getElementById('previewVideo');
             video.pause();
             video.src = "";
             const modal = document.getElementById('previewModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
         }
+
+        video.addEventListener('play', () => {
+            playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        });
+        video.addEventListener('pause', () => {
+            playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+        });
 
         function openQRModal(url, title) {
             document.getElementById('qrTitle').innerText = title || 'Campaign';
