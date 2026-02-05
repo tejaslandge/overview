@@ -68,9 +68,24 @@
         .control-btns {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 30px;
+            justify-content: space-between;
+            width: 100%;
             color: white;
+        }
+
+        .main-controls {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .video-container:fullscreen {
+            border-radius: 0;
+            width: 100vw;
+            height: 100vh;
         }
 
         .video-container video::-webkit-media-controls {
@@ -122,25 +137,24 @@
                     </div>
 
                     <div class="control-btns">
-                        <button onclick="skip(-10)" class="hover:scale-110 transition-transform">
-                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M12.5 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6c-1.66 0-3.14-.69-4.22-1.78L6.37 17.63C7.81 19.08 9.8 20 12 20c4.42 0 8-3.58 8-8s-3.58-8-8-8zm-.5 11V9l-3.5 2.5 3.5 2.5z" />
-                            </svg>
-                        </button>
+                        <div class="flex items-center gap-4">
+                            <!-- Placeholder for volume if needed later -->
+                        </div>
 
-                        <button onclick="togglePlay()"
-                            class="bg-white text-black p-4 rounded-full hover:scale-110 transition-transform"
-                            id="playBtn">
-                            <svg id="playIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M8 5v14l11-7z" />
-                            </svg>
-                        </button>
+                        <div class="main-controls">
+                            <button onclick="togglePlay()"
+                                class="bg-white text-black p-4 rounded-full hover:scale-110 transition-transform"
+                                id="playBtn">
+                                <svg id="playIcon" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
+                            </button>
+                        </div>
 
-                        <button onclick="skip(10)" class="hover:scale-110 transition-transform">
-                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                        <button onclick="toggleFullscreen()" class="hover:scale-110 transition-transform">
+                            <svg id="fullscreenIcon" class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                                 <path
-                                    d="M11.5 3c4.97 0 9 4.03 9 9H23l-3.89 3.89-.07.14L15 12h3c0-3.31-2.69-6-6-6s-6 2.69-6 6 2.69 6 6 6c1.66 0 3.14-.69 4.22-1.78l1.41 1.41C16.19 19.08 14.2 20 12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8zm.5 11V9l3.5 2.5-3.5 2.5z" />
+                                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
                             </svg>
                         </button>
                     </div>
@@ -215,9 +229,31 @@
             }
         }
 
-        function skip(time) {
-            video.currentTime += time;
+        function toggleFullscreen() {
+            const container = document.getElementById('playerContainer');
+            const icon = document.getElementById('fullscreenIcon');
+
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+                icon.innerHTML =
+                    '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
+            } else {
+                document.exitFullscreen();
+                icon.innerHTML =
+                    '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
+            }
         }
+
+        // Update icon if exited via Esc key
+        document.addEventListener('fullscreenchange', () => {
+            const icon = document.getElementById('fullscreenIcon');
+            if (!document.fullscreenElement) {
+                icon.innerHTML =
+                    '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
+            }
+        });
 
         video.addEventListener('timeupdate', () => {
             const percent = (video.currentTime / video.duration) * 100;
