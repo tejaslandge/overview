@@ -13,6 +13,9 @@ use App\Http\Controllers\LogController;
 Route::get('/', [VideoController::class, 'overview'])
     ->name('videos.index');
 
+Route::get('/videos/{video}', [VideoController::class, 'show'])
+    ->name('videos.show');
+
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes

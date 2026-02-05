@@ -60,6 +60,18 @@ class VideoController extends Controller
 
         return view('public.overview', compact('videos', 'categories'));
     }
+    
+    /**
+     * Public show page for a single video (QR scan target)
+     */
+    public function show(Video $video)
+    {
+        if (!$video->is_active) {
+            abort(404);
+        }
+        
+        return view('public.show', compact('video'));
+    }
 
     /**
      * Show upload form
