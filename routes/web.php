@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\AdminLoginController;
+use App\Http\Controllers\LogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,4 +63,11 @@ Route::middleware('admin')->group(function () {
     // Logout (ADMIN ONLY)
     Route::post('/logout', [AdminLoginController::class, 'logout'])
         ->name('logout');
+
+    // System Logs
+    Route::get('/logs', [LogController::class, 'index'])
+        ->name('admin.logs');
+    
+    Route::delete('/logs', [LogController::class, 'destroy'])
+        ->name('admin.logs.destroy');
 });

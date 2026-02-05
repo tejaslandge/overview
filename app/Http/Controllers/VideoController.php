@@ -34,7 +34,7 @@ class VideoController extends Controller
         $videos = $query->latest()->get();
         $categories = Video::whereNotNull('category')->distinct()->pluck('category');
 
-        return view('dashboard', compact('videos', 'categories'));
+        return view('admin.dashboard', compact('videos', 'categories'));
     }
 
     /**
@@ -58,7 +58,7 @@ class VideoController extends Controller
         $videos = $query->latest()->get();
         $categories = Video::where('is_active', true)->whereNotNull('category')->distinct()->pluck('category');
 
-        return view('overview', compact('videos', 'categories'));
+        return view('public.overview', compact('videos', 'categories'));
     }
 
     /**
@@ -66,7 +66,7 @@ class VideoController extends Controller
      */
     public function create()
     {
-        return view('upload');
+        return view('admin.upload');
     }
 
     /**
@@ -108,7 +108,7 @@ class VideoController extends Controller
      */
     public function edit(Video $video)
     {
-        return view('edit', compact('video'));
+        return view('admin.edit', compact('video'));
     }
 
     /**
