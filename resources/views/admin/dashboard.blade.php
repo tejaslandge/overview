@@ -426,6 +426,10 @@
         </div>
     </div>
 
+    <footer class="text-center mt-12 mb-12">
+        <p>Copyright &copy; 2026 Shops Digital Ads. All rights reserved.</p>
+    </footer>
+
     <script>
         const video = document.getElementById('previewVideo');
         const playIcon = document.getElementById('playIcon');
